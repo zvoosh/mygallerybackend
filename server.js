@@ -8,7 +8,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3003;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173/", "https://gallery.dusanprogram.eu"],
+    credentials: true,
+  })
+);
 
 // Initialize ImageKit instance
 const imagekit = new ImageKit({
