@@ -7,11 +7,11 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3003;
+const allowedOrigins = ["https://dusanprogram.eu"];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = ["https://dusanprogram.eu"];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
