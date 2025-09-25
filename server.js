@@ -14,6 +14,10 @@ app.use(
     credentials: true,
   })
 );
+app.use((req, res, next) => {
+  console.log("Request from origin:", req.headers.origin);
+  next();
+});
 
 // Initialize ImageKit instance
 const imagekit = new ImageKit({
