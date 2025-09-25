@@ -10,7 +10,7 @@ const port = process.env.PORT || 3003;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173/", "https://gallery.dusanprogram.eu"],
+    origin: ["http://localhost:5173/", "https://gallery.dusanprogram.eu", "https://dusanprogram.eu"],
     credentials: true,
   })
 );
