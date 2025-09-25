@@ -24,7 +24,6 @@ app.use(
     credentials: true,
   })
 );
-app.options("*", cors());
 
 app.use((req, res, next) => {
   console.log("Request from origin:", req.headers.origin);
