@@ -8,12 +8,24 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3003;
 
+const allowedOrigins = ["https://dusanprogram.eu"];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173/", "https://gallery.dusanprogram.eu", "https://dusanprogram.eu"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+app.options("*", cors());
+
 app.use((req, res, next) => {
   console.log("Request from origin:", req.headers.origin);
   next();
