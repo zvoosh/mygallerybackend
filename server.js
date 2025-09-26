@@ -7,10 +7,11 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3003;
-// ✅ Handle preflight OPTIONS requests
+
+// ✅ Handle preflight requests
 app.options("*", cors());
 
-// ✅ Apply CORS middleware
+// ✅ CORS middleware
 app.use(
   cors({
     origin: "https://mygallery.dusanprogram.eu",
@@ -20,72 +21,51 @@ app.use(
   })
 );
 
-// ✅ Parse JSON bodies
+// ✅ Parse JSON
 app.use(express.json());
 
-// ✅ Log incoming requests
-app.use((req, res, next) => {
-  console.log("Origin:", req.headers.origin);
-  console.log("Headers:", req.headers);
-  next();
-});
-
-// Initialize ImageKit instance
+// ✅ ImageKit setup
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-// Route to retrieve file metadata or URL
-app.get("/files/:filename", async (req, res) => {
-  const filename = req.params.filename;
+// ✅ Routes
+app.get("/files", async (req, res) => {
+  try {
+    const files = await imagekit.listFiles({ limit: 100 });
+    res.json(files.map(f => ({
+      name: f.name,
+      url: f.url,
+      size: f.size,
+      type: f.mime,
+    })));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch files" });
+  }
+});
 
+app.get("/files/:filename", async (req, res) => {
   try {
     const fileList = await imagekit.listFiles({
-      searchQuery: `name = "${filename}"`,
+      searchQuery: `name = "${req.params.filename}"`,
     });
 
-    if (fileList.length === 0) {
-      return res.status(404).json({ error: "File not found" });
-    }
+    if (!fileList.length) return res.status(404).json({ error: "File not found" });
 
-    // You can choose to redirect, send metadata, or just the URL
     const file = fileList[0];
-    return res.json({
+    res.json({
       name: file.name,
       url: file.url,
       size: file.size,
       type: file.mime,
     });
-  } catch (error) {
-    console.error("Error fetching file:", error.message);
+  } catch (err) {
     res.status(500).json({ error: "Error fetching file" });
   }
 });
 
-app.get("/files", async (req, res) => {
-  try {
-    const files = await imagekit.listFiles({
-      fileType: "image", // Optional: only fetch image files
-      limit: 100, // Max 1000 per request
-      skip: 0, // For pagination
-    });
-
-    const imageList = files.map((file) => ({
-      name: file.name,
-      url: file.url,
-      size: file.size,
-      type: file.mime,
-    }));
-
-    res.json(imageList);
-  } catch (error) {
-    console.error("Error fetching images:", error.message);
-    res.status(500).json({ error: "Failed to fetch images" });
-  }
-});
-
 app.listen(port, () => {
-  console.log(`✅ Server running on http://localhost:${port}`);
+  console.log(`✅ Backend running on http://localhost:${port}`);
 });
