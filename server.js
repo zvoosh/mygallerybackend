@@ -7,8 +7,6 @@ dotenv.config();
 
 const app = express();
 
-app.options("/*", cors());
-
 app.use(
   cors({
     origin: "https://mygallery.dusanprogram.eu",
@@ -17,6 +15,7 @@ app.use(
     allowedHeaders: ["Authorization", "Content-Type"],
   })
 );
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -64,5 +63,5 @@ app.get("/files/:filename", async (req, res) => {
 });
 
 app.listen(3003, "0.0.0.0", () => {
-  console.log("✅ Server running on port 3003");
+  console.log("✅ Server running on port 0.0.0.03003");
 });
