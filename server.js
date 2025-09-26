@@ -7,16 +7,6 @@ dotenv.config();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "https://mygallery.dusanprogram.eu",
-    credentials: true,
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Authorization", "Content-Type"],
-  })
-);
-app.options("*", cors());
-
 app.use(express.json());
 
 const imagekit = new ImageKit({
