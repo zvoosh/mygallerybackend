@@ -7,19 +7,18 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3003;
-const allowedOrigins = [
-  "https://dusanprogram.eu",
-  "https://mygallery.dusanprogram.eu",
-  "http://localhost:5173",
-];
 
+app.options("*", cors());
+
+// ✅ Apply CORS middleware
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: "https://mygallery.dusanprogram.eu",
     credentials: true,
   })
 );
 
+// ✅ Log incoming requests (optional but helpful)
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
   console.log("Headers:", req.headers);
