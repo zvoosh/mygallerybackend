@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3003;
-
+// ✅ Handle preflight OPTIONS requests
 app.options("*", cors());
 
 // ✅ Apply CORS middleware
@@ -15,10 +15,15 @@ app.use(
   cors({
     origin: "https://mygallery.dusanprogram.eu",
     credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
   })
 );
 
-// ✅ Log incoming requests (optional but helpful)
+// ✅ Parse JSON bodies
+app.use(express.json());
+
+// ✅ Log incoming requests
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
   console.log("Headers:", req.headers);
